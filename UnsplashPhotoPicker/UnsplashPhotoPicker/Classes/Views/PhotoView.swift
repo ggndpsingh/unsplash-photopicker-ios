@@ -9,53 +9,60 @@
 import UIKit
 
 class PhotoView: UIView {
-
-    static var nib: UINib { return UINib(nibName: "PhotoView", bundle: Bundle(for: PhotoView.self)) }
-
     private var imageDownloader = ImageDownloader()
     private var screenScale: CGFloat { return UIScreen.main.scale }
 
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var gradientView: GradientView!
-    @IBOutlet weak var userNameLabel: UILabel!
-    @IBOutlet var overlayViews: [UIView]!
+    private let imageView: UIImageView = {
+        let view = UIImageView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
 
-    var showsUsername = true {
-        didSet {
-            userNameLabel.alpha = showsUsername ? 1 : 0
-            gradientView.alpha = showsUsername ? 1 : 0
-        }
-    }
+    private let username: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 10)
+        label.textColor = .white
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
+        label.layer.shadowColor = UIColor.black.cgColor
+        label.layer.shadowOpacity = 0.8
+        label.layer.shadowRadius = 2
+        label.layer.shadowOffset = .zero
 
-        accessibilityIgnoresInvertColors = true
-        gradientView.setColors([
-            GradientView.Color(color: .clear, location: 0),
-            GradientView.Color(color: UIColor(white: 0, alpha: 0.5), location: 1)
-        ])
-    }
+        return label
+    }()
 
     func prepareForReuse() {
-        userNameLabel.text = nil
         imageView.backgroundColor = .clear
         imageView.image = nil
         imageDownloader.cancel()
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        let fontSize: CGFloat = traitCollection.horizontalSizeClass == .compact ? 10 : 13
-        userNameLabel.font = UIFont.systemFont(ofSize: fontSize)
-    }
-
     // MARK: - Setup
 
+    init() {
+        super.init(frame: .zero)
+        addSubview(imageView)
+        addSubview(username)
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: topAnchor),
+            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            username.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4),
+            username.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4),
+            username.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4),
+        ])
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     func configure(with photo: UnsplashPhoto, showsUsername: Bool = true) {
-        self.showsUsername = showsUsername
-        userNameLabel.text = photo.user.displayName
         imageView.backgroundColor = photo.color
+        username.text = photo.user.displayName
         downloadImage(with: photo)
     }
 
@@ -90,13 +97,8 @@ class PhotoView: UIView {
     // MARK: - Utility
 
     class func view(with photo: UnsplashPhoto) -> PhotoView? {
-        guard let photoView = nib.instantiate(withOwner: nil, options: nil).first as? PhotoView else {
-            return nil
-        }
-
+        let photoView = PhotoView()
         photoView.configure(with: photo)
-
         return photoView
     }
-
 }
