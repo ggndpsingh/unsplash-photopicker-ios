@@ -16,7 +16,7 @@ class PhotoCell: UICollectionViewCell {
 
     let photoView: PhotoView = {
         // swiftlint:disable force_cast
-        let photoView = (PhotoView.nib.instantiate(withOwner: nil, options: nil).first as! PhotoView)
+        let photoView = PhotoView()
         photoView.translatesAutoresizingMaskIntoConstraints = false
         return photoView
     }()
