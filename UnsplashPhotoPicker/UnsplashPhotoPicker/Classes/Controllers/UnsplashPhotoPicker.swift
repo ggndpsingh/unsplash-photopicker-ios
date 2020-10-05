@@ -32,7 +32,7 @@ public class UnsplashPhotoPicker: UINavigationController {
 
     // MARK: - Properties
 
-    public let photoPickerViewController: UnsplashPhotoPickerViewController
+    private let photoPickerViewController: UnsplashPhotoPickerViewController
 
     /// A delegate that is notified of significant events.
     public weak var photoPickerDelegate: UnsplashPhotoPickerDelegate?
@@ -51,6 +51,7 @@ public class UnsplashPhotoPicker: UINavigationController {
 
         super.init(nibName: nil, bundle: nil)
 
+        viewControllers = [photoPickerViewController]
         photoPickerViewController.delegate = self
     }
 
@@ -62,8 +63,6 @@ public class UnsplashPhotoPicker: UINavigationController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-
-        viewControllers = [photoPickerViewController]
     }
 
     // MARK: - Download tracking
