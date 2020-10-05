@@ -32,7 +32,7 @@ public class UnsplashPhotoPicker: UINavigationController {
 
     // MARK: - Properties
 
-    private let photoPickerViewController: UnsplashPhotoPickerViewController
+    public let photoPickerViewController: UnsplashPhotoPickerViewController
 
     /// A delegate that is notified of significant events.
     public weak var photoPickerDelegate: UnsplashPhotoPickerDelegate?
